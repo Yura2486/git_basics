@@ -51,19 +51,43 @@ def deposit(initial_sum, percent, fixed_period, set_period):
 
 def main(args):
     """Gets called when run as a script."""
-    if len(args) != 4 + 1:
+
+    # If there are not enough arguments, exit
+    
+    if len(args) < 3 + 1 or len(args) > 4 + 1:
         exit(USAGE.format(script=args[0]))
+    
+    # The calculation of yields for some common periods of time
+    # if the set_period isn't given
+    
+    if len(args) <= 3 + 1:
+        args = args[1:]
+        initial_sum, percent, fixed_period = map(float, args)
+        res = deposit(initial_sum, percent, fixed_period, 31)
+        print("| 1 month\t", res)
+        res = deposit(initial_sum, percent, fixed_period, 365)
+        print("| 1 year\t", res)
+        res = deposit(initial_sum, percent, fixed_period, 1825)
+        print("| 5 years\t", res)
+        res = deposit(initial_sum, percent, fixed_period, 3650)
+        print("| 10 years\t", res)
+        
+    else:
+        args = args[1:]
+        initial_sum, percent, fixed_period, set_period = map(float, args)
 
-    args = args[1:]
-    initial_sum, percent, fixed_period, set_period = map(float, args)
+        # same as
+        # initial_sum = float(args[0])
+        # percent = float(args[1])
+        # ...
 
-    # same as
-    # initial_sum = float(args[0])
-    # percent = float(args[1])
-    # ...
+        # The calculation of the yield for given period of time
+        # and the yield for 1 year if all arguments are given
 
-    res = deposit(initial_sum, percent, fixed_period, set_period)
-    print(res)
+        res = deposit(initial_sum, percent, fixed_period, set_period)
+        print("|", set_period, "day(s)", "\t", res)
+        res = deposit(initial_sum, percent, fixed_period, 365)
+        print("| 1 year\t", res)
 
 
 if __name__ == '__main__':

@@ -12,7 +12,7 @@ DEF_CHOICE = 8      # how many times to repeat a dish
 MENU = ['spam', 'egg', 'sausage', 'bacon']  # that's all combinations
 MENU_MULTI = MENU + ['eggs', 'sausages']    # including plurals
 JOINTS = [', and ', ', ', ' and ', ' with ', ' and double portion of ']
-PREFERED = MENU[0]  # that's what promoted most
+PREFERED = random.choice(MENU)  # that's what promoted most
 FORBIDDEN = {'not', 'without', 'no'}
 
 SONG = ', '.join([PREFERED.capitalize()] + [PREFERED] * DEF_CHOICE) + '!'
@@ -26,22 +26,22 @@ D_BAD = "Disgusting. Who eats {dishes}?"
 D_UNAVAILABLE = "That's not on our menu.\nWe have {dishes}."
 
 
+def promote(num_choice=DEF_CHOICE):
+    print(D_PROMOTE.format(dishes=get_dishes(num_choice)))
+
 def dialog(num_choice=DEF_CHOICE):
     """User dialog logic."""
     print(D_WELCOME)
 
     entry = input(D_CHOICE).strip()   # user entry
     words = entry.lower().split()
-
-    def promote():
-        print(D_PROMOTE.format(dishes=get_dishes(num_choice)))
     
     if set(words) & set(MENU_MULTI):
         # user named something on the menu - do further check
         if set(words) & set(FORBIDDEN):
             # user asked not to put common dishes - blame
             print(D_BAD.format(dishes=entry))
-            promote()
+            promote(num_choice)
         else:
             # user asked for what's on menu - compliment
             print(D_GOOD.format(dishes=entry))
@@ -50,7 +50,7 @@ def dialog(num_choice=DEF_CHOICE):
 
     if not words:
         # user haven't selected anything - promote a good menu
-        promote()
+        promote(num_choice)
         return
     
     print(D_UNAVAILABLE.format(dishes=get_dishes(num_choice)))
@@ -80,6 +80,9 @@ def main(args):
     """Gets called when run as a script."""
     if len(args) > 1:
         exit('Too many arguments. ' + TIP.format(script=script))
+    
+    if len(args) == 1 and (args[0].isnumeric()) == 0:
+        exit('You need to choose number of dishes, not name of dishes. ' + TIP.format(script=script))
     
     num = DEF_CHOICE
     if len(args) > 0:
